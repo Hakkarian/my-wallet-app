@@ -28,6 +28,18 @@ a:hover {
 
 body {
   margin: 0;
+  background-image: url(./images/coinbg.jpg);
+  height: 100vh;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  @media screen and (max-width: 768px) {
+    background-image: url(./images/cointablet.jpg);
+    height: 100vh;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+  }
 }
 
 h1 {

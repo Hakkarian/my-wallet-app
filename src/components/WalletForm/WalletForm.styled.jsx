@@ -3,28 +3,30 @@ import { Field, Form } from "formik";
 import { WalletButtonCss } from '../WalletStatus/WalletStatus.styled';
 
 export const FormCss = styled(Form)`
-    padding: 1.25rem;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+
+  background-color: rgba(255, 255, 255, 0.5);
+
+  backdrop-filter: blur(10px);
+
+  border-radius: 1.25rem;
+
+  @media screen and (min-width: 768px) {
+    height: 15rem;
+  }
+
+  label {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    gap: 0.75rem;
-
-    border: 1px solid #1a1a1a;
-    border-radius: 1.25rem;
-
-    @media screen and (min-width: 768px) {
-      height: 15rem;
-    };
-
-    label {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 1rem;
-    }
-
-`
+    gap: 1rem;
+  }
+`;
 
 export const FieldCss = styled(Field)`
   padding: 0.5rem;
