@@ -58,3 +58,7 @@ export const SubmitButtonCss = styled(WalletButtonCss)`
     border: 1px solid #ffd700;
   }
 `;
+
+export const Css = styled.div`
+
+`

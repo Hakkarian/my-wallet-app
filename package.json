@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@emotion/styled": "^11.11.0",
+    "@metamask/onboarding": "^1.0.1",
     "@web3modal/ethereum": "^2.7.0",
     "@web3modal/react": "^2.7.0",
     "concurrently": "^8.2.0",

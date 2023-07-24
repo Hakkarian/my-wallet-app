@@ -1,6 +1,6 @@
 import { Formik } from 'formik'
 import * as Yup from 'yup';
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { ErrorMessageCss, FieldCss, FormCss, SubmitButtonCss } from './WalletForm.styled';
 import { useWeb3Modal } from '@web3modal/react';
 import Web3Modal  from 'web3modal';
@@ -16,13 +16,34 @@ const initialState = {
   address: ""
 }
 
-console.log(window.ethereum.isConnected());
-
 const WalletForm = () => {
   const [defaultAccount, setDefaultAccount] = useState("");
-  const [userBalance, setUserBalance] = useState(null);
+  const [isAndroid, setIsAndroid] = useState(null);
+  const [isIOS, setIsIOS] = useState(null);
+  const [isMetamaskInstalled, setIsMetamaskInstalled] = useState(false);
   const { open, close } = useWeb3Modal();
   const web3Modal = new Web3Modal();
+
+  console.log(defaultAccount);
+
+  useEffect(() => {
+    const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+    setIsIOS(/iPad|iPhone|iPod/.test(userAgent));
+    setIsAndroid(/Android/.test(userAgent));
+    setIsIOS(() => {
+
+    })
+    setIsMetamaskInstalled(!window.ethereum)
+    if (window.ethereum) {
+      window.ethereum
+        .request({ method: "eth_requestAccounts" })
+        .then((account) => setDefaultAccount(account[0]));
+      
+      window.ethereum.on('accountsChanged', account => {
+        setDefaultAccount(account[0])
+      })
+    }
+  }, [])
 
   const isConnected = web3Modal.connect().then(result => console.log(result))
   console.log(Number(0.1 * 1000000000000).toString(16));
@@ -34,7 +55,7 @@ const WalletForm = () => {
     console.log(balance)
     let params = [
       {
-        from: "0x806a568F718dbF42811942430C80Bb5Ce1009cd2",
+        from: defaultAccount,
         to: address,
         gas: Number(21000).toString(16),
         gasPrice: Number(2500000).toString(16),
@@ -52,61 +73,93 @@ const WalletForm = () => {
     });
   }
 
+  const installMetamask = () => {
+    if (isIOS) {
+      return window.location.href = "https://apps.apple.com/ru/app/metamask-blockchain-wallet/id1438144202"
+    }
+    if (isAndroid) {
+      return (window.location.href =
+        "https://play.google.com/store/search?q=metamask&c=apps");
+    }
+    window.location.href =
+      "https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn";
+  }
+
   return (
     <>
-      <Formik
-        initialValues={initialState}
-        validationSchema={validationSchema}
-        onSubmit={sendTransaction}
-      >
-        {({
-          values,
-          errors,
-          touched,
-          handleChange,
-          handleBlur,
-          isSubmitting,
-          /* and other goodies */
-        }) => (
-          <FormCss onSubmit={sendTransaction}>
-            <label>
+      {isMetamaskInstalled && (
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <h2 style={{ color: "#000" }}>
+            To use this app, you need to <span style={{color: "#fff"}}>install Metamask.</span> Please,
+            do it.
+          </h2>
+          <button type="button" onClick={installMetamask}>
+            Install Metamask
+          </button>
+        </div>
+      )}
+      {!isMetamaskInstalled && (
+        <Formik
+          initialValues={initialState}
+          validationSchema={validationSchema}
+          onSubmit={sendTransaction}
+        >
+          {({
+            values,
+            errors,
+            touched,
+            handleChange,
+            handleBlur,
+            isSubmitting,
+            /* and other goodies */
+          }) => (
+            <FormCss onSubmit={sendTransaction}>
               <label>
+                <label>
+                  <FieldCss
+                    type="address"
+                    name="address"
+                    placeholder="Enter your address..."
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    value={values.address}
+                    className={errors.address ? "invalid" : "valid"}
+                  />
+                </label>
+                {errors.address && (
+                  <ErrorMessageCss>
+                    {errors.address && touched.address && errors.address}
+                  </ErrorMessageCss>
+                )}
                 <FieldCss
-                  type="address"
-                  name="address"
-                  placeholder="Enter your address..."
+                  type="balance"
+                  name="balance"
+                  placeholder="Enter your balance..."
                   onChange={handleChange}
                   onBlur={handleBlur}
-                  value={values.address}
-                  className={errors.address ? "invalid" : "valid"}
+                  value={values.balance}
+                  className={errors.balance ? "invalid" : "valid"}
                 />
               </label>
-              {errors.address && (
+              {errors.balance && (
                 <ErrorMessageCss>
-                  {errors.address && touched.address && errors.address}
+                  {errors.balance && touched.balance && errors.balance}
                 </ErrorMessageCss>
               )}
-              <FieldCss
-                type="balance"
-                name="balance"
-                placeholder="Enter your balance..."
-                onChange={handleChange}
-                onBlur={handleBlur}
-                value={values.balance}
-                className={errors.balance ? "invalid" : "valid"}
-              />
-            </label>
-            {errors.balance && (
-              <ErrorMessageCss>
-                {errors.balance && touched.balance && errors.balance}
-              </ErrorMessageCss>
-            )}
-            <SubmitButtonCss type="submit" disabled={isSubmitting}>
-              Submit
-            </SubmitButtonCss>
-          </FormCss>
-        )}
-      </Formik>
+              <SubmitButtonCss type="submit" disabled={isSubmitting}>
+                Submit
+              </SubmitButtonCss>
+            </FormCss>
+          )}
+        </Formik>
+      )}
     </>
   );
 }

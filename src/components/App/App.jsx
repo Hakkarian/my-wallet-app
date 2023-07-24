@@ -1,7 +1,9 @@
-import { Container } from '../SharedLayout';
-import Header from '../Header';
-import Hero from '../Hero';
-import { Toaster } from 'react-hot-toast';
+import { Toaster } from "react-hot-toast";
+import { Container } from "../SharedLayout";
+import Header from "../Header";
+import Hero from "../Hero";
+import { useEffect } from "react";
+
 
 const App = () => {
   return (
@@ -13,6 +15,6 @@ const App = () => {
       </Container>
     </>
   );
-}
+};
 
 export default App;
