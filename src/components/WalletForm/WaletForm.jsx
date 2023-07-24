@@ -26,6 +26,8 @@ const WalletForm = () => {
 
   console.log(defaultAccount);
 
+  alert("Device seen in the mobile");
+
   useEffect(() => {
     const userAgent = navigator.userAgent || navigator.vendor || window.opera;
     setIsIOS(/iPad|iPhone|iPod/.test(userAgent));
