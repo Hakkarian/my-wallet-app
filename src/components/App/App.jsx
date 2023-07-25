@@ -1,8 +1,12 @@
 import { Toaster } from "react-hot-toast";
+import { Suspense, lazy, useEffect } from "react";
+
 import { Container } from "../SharedLayout";
 import Header from "../Header";
 import Hero from "../Hero";
-import { useEffect } from "react";
+import { LoaderDesktop } from "../Loader";
+
+// const Hero = lazy(() => import("../Hero"));
 
 
 const App = () => {
@@ -10,9 +14,11 @@ const App = () => {
     <>
       <Toaster />
       <Header />
-      <Container>
-        <Hero />
-      </Container>
+      {/* <Suspense fallback={<LoaderDesktop />}> */}
+        <Container>
+          <Hero />
+        </Container>
+      {/* </Suspense> */}
     </>
   );
 };

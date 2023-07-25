@@ -1,10 +1,12 @@
 import { Formik } from 'formik'
 import * as Yup from 'yup';
 import { useEffect, useState } from 'react'
-import { ErrorMessageCss, FieldCss, FormCss, SubmitButtonCss } from './WalletForm.styled';
-import { useWeb3Modal } from '@web3modal/react';
-import Web3Modal  from 'web3modal';
-import { toast } from 'react-hot-toast';
+import { useWeb3Modal } from "@web3modal/react";
+import Web3Modal from "web3modal";
+import { toast } from "react-hot-toast";
+import { ErrorMessageCss, FieldCss, FormCss, SubmitButtonCss, Css } from './WalletForm.styled';
+import {Loader} from '../Loader'
+
 
 const validationSchema = Yup.object().shape({
   balance: Yup.number().required(),
@@ -18,6 +20,7 @@ const initialState = {
 
 const WalletForm = () => {
   const [defaultAccount, setDefaultAccount] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const [isAndroid, setIsAndroid] = useState(null);
   const [isIOS, setIsIOS] = useState(null);
   const [isMetamaskInstalled, setIsMetamaskInstalled] = useState(false);
@@ -25,8 +28,6 @@ const WalletForm = () => {
   const web3Modal = new Web3Modal();
 
   console.log(defaultAccount);
-
-  alert("Device seen in the mobile");
 
   useEffect(() => {
     const userAgent = navigator.userAgent || navigator.vendor || window.opera;
@@ -52,6 +53,7 @@ const WalletForm = () => {
 
   const sendTransaction = async (e) => {
     e.preventDefault();
+    setIsLoading(true)
     const address = e.target.address.value;
     const balance = e.target.balance.value;
     console.log(balance)
@@ -66,46 +68,40 @@ const WalletForm = () => {
     ];
 
     await window.ethereum?.request({ method: "eth_sendTransaction", params }).catch((err) => {
-      console.log(err);
-    })
-    toast.promise(saveSettings(settings), {
-      loading: "Saving...",
-      success: <b>Settings saved!</b>,
-      error: <b>Could not save.</b>,
-    });
+      console.log(err)
+    }).finally(() => setIsLoading(false))
   }
 
-  const installMetamask = () => {
-    if (isIOS) {
-      return window.location.href = "https://apps.apple.com/ru/app/metamask-blockchain-wallet/id1438144202"
-    }
-    if (isAndroid) {
-      return (window.location.href =
-        "https://play.google.com/store/search?q=metamask&c=apps");
-    }
-    window.location.href =
-      "https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn";
+  const installMetamask = async () => {
+    const promise = new Promise((resolve, reject) => {
+      if (isIOS) {
+        resolve(window.location.href =
+          "https://apps.apple.com/ru/app/metamask-blockchain-wallet/id1438144202");
+      }
+      if (isAndroid) {
+        resolve(window.location.href =
+          "https://play.google.com/store/search?q=metamask&c=apps");
+      }
+      resolve(window.location.href =
+        "https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn")
+    })
+
+    await promise.catch((err) => console.log(err))
   }
 
   return (
     <>
       {isMetamaskInstalled && (
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
+        <Css>
           <h2 style={{ color: "#000" }}>
-            To use this app, you need to <span style={{color: "#fff"}}>install Metamask.</span> Please,
-            do it.
+            To use this app, you need to{" "}
+            <span style={{ color: "#fff" }}>install Metamask.</span> Please, do
+            it.
           </h2>
-          <button type="button" onClick={installMetamask}>
-            Install Metamask
+          <button type="button" onClick={installMetamask} disabled={isLoading} style={{display: "flex"}}>
+            {isLoading && <Loader />} <span>Install Metamask</span>
           </button>
-        </div>
+        </Css>
       )}
       {!isMetamaskInstalled && (
         <Formik
@@ -113,15 +109,7 @@ const WalletForm = () => {
           validationSchema={validationSchema}
           onSubmit={sendTransaction}
         >
-          {({
-            values,
-            errors,
-            touched,
-            handleChange,
-            handleBlur,
-            isSubmitting,
-            /* and other goodies */
-          }) => (
+          {({ values, errors, touched, handleChange, handleBlur }) => (
             <FormCss onSubmit={sendTransaction}>
               <label>
                 <label>
@@ -155,8 +143,8 @@ const WalletForm = () => {
                   {errors.balance && touched.balance && errors.balance}
                 </ErrorMessageCss>
               )}
-              <SubmitButtonCss type="submit" disabled={isSubmitting}>
-                Submit
+              <SubmitButtonCss type="submit" disabled={isLoading}>
+                {isLoading && <Loader />} <span>Submit</span>
               </SubmitButtonCss>
             </FormCss>
           )}

@@ -56,7 +56,7 @@ button {
   font-family: inherit;
   background-color: #1a1a1a;
   cursor: pointer;
-  transition: border 250ms ease-in-out, background-color 250ms ease-in-out, color 250ms ease-in-out;
+  transition: border 250ms ease-in-out, background-color 250ms ease-in-out, color 250ms ease-in-out, border 250ms ease-in-out;
 }
 button:hover {
   border-color: #646cff;

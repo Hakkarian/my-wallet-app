@@ -52,13 +52,30 @@ export const ErrorMessageCss = styled.span`
 
 `;
 export const SubmitButtonCss = styled(WalletButtonCss)`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
   &:hover,
   &:focus {
     color: #ffd700;
     border: 1px solid #ffd700;
   }
+
+  &:disabled {
+    background-color: rgba(0, 0, 0, 0.5);
+    border: 1px dashed #747bff;
+  }
 `;
 
 export const Css = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 
+  text-align: center;
+
+  @media screen and (max-width: 768px) {
+    font-size: 12px;
+  }
 `
