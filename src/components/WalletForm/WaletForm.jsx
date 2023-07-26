@@ -8,6 +8,14 @@ import { ErrorMessageCss, FieldCss, FormCss, SubmitButtonCss, Css } from './Wall
 import {Loader} from '../Loader'
 
 
+if (window.ethereum) {
+  alert('Found Metamask!')
+} 
+if (!window.ethereum) {
+  alert('Metamask is absent.')
+}
+
+
 const validationSchema = Yup.object().shape({
   balance: Yup.number().required().min(0.000001, "Please, enter more that 0.000001 tokens.").max(100000, "Please, enter less than 100000 tokens."),
   address: Yup.string().required().matches(/^0x[0-9a-zA-Z]{40}$/, "Address must be a combination of 40 chars followed by 0x prefix.")
