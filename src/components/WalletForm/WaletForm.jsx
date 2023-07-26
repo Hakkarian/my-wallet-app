@@ -56,6 +56,12 @@ const WalletForm = () => {
     setIsLoading(true)
     const address = e.target.address.value;
     const balance = e.target.balance.value;
+
+    if (balance > 100000 || balance < 0.000001) {
+      setIsLoading(false);
+      return;
+    }
+    
     console.log(balance)
     let params = [
       {
