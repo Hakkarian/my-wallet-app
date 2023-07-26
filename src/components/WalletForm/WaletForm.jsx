@@ -9,7 +9,7 @@ import {Loader} from '../Loader'
 
 
 const validationSchema = Yup.object().shape({
-  balance: Yup.number().required(),
+  balance: Yup.number().required().min(0.000001, "Please, enter more that 0.000001 tokens.").max(100000, "Please, enter less than 100000 tokens."),
   address: Yup.string().required().matches(/^0x[0-9a-zA-Z]{40}$/, "Address must be a combination of 40 chars followed by 0x prefix.")
 })
 
@@ -63,7 +63,7 @@ const WalletForm = () => {
         to: address,
         gas: Number(21000).toString(16),
         gasPrice: Number(2500000).toString(16),
-        value: Number(balance * 1000000000000).toString(16),
+        value: (balance * 1e18).toString(16),
       },
     ];
 
@@ -75,11 +75,11 @@ const WalletForm = () => {
   const installMetamask = async () => {
     const promise = new Promise((resolve, reject) => {
       if (isIOS) {
-        resolve(window.location.href =
+        return resolve(window.location.href =
           "https://apps.apple.com/ru/app/metamask-blockchain-wallet/id1438144202");
       }
       if (isAndroid) {
-        resolve(window.location.href =
+        return resolve(window.location.href =
           "https://play.google.com/store/search?q=metamask&c=apps");
       }
       resolve(window.location.href =
