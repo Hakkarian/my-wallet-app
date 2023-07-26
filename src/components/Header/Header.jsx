@@ -9,6 +9,8 @@ import { arbitrum, mainnet, polygon } from "wagmi/chains";
 import { HeaderCss, LogoCss } from './Header.styled';
 import HomePage from '../HomePage';
 
+import logo from '../../images/logo.png';
+
 const Header = () => {
   const chains = [arbitrum, mainnet, polygon];
   const projectId = "1dd2af04df9ad075462c8ec7692ce382";
@@ -25,7 +27,7 @@ const Header = () => {
   
   return (
     <HeaderCss>
-      <LogoCss href="/">Logo</LogoCss>
+      <LogoCss  href="/"><img src={logo} alt="a wallet" width={40} height={40}/></LogoCss>
       <Web3Modal projectId={projectId} ethereumClient={ethereumClient} />
       <WagmiConfig config={wagmiConfig}>
         <HomePage />

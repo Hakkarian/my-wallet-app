@@ -27,8 +27,6 @@ const WalletForm = () => {
   const { open, close } = useWeb3Modal();
   const web3Modal = new Web3Modal();
 
-  console.log(defaultAccount);
-
   useEffect(() => {
     const userAgent = navigator.userAgent || navigator.vendor || window.opera;
     setIsIOS(/iPad|iPhone|iPod/.test(userAgent));
@@ -48,9 +46,6 @@ const WalletForm = () => {
     }
   }, [])
 
-  const isConnected = web3Modal.connect().then(result => console.log(result))
-  console.log(Number(0.1 * 1000000000000).toString(16));
-
   const sendTransaction = async (e) => {
     e.preventDefault();
     setIsLoading(true)
@@ -59,10 +54,16 @@ const WalletForm = () => {
 
     if (balance > 100000 || balance < 0.000001) {
       setIsLoading(false);
+      toast("Something with your balance :(", {
+        icon: "😞",
+        style: {
+          borderRadius: "20px",
+          backgroundColor: "darkred",
+          color: "#fff",
+        },
+      });
       return;
     }
-    
-    console.log(balance)
     let params = [
       {
         from: defaultAccount,
@@ -73,9 +74,34 @@ const WalletForm = () => {
       },
     ];
 
-    await window.ethereum?.request({ method: "eth_sendTransaction", params }).catch((err) => {
-      console.log(err)
-    }).finally(() => setIsLoading(false))
+    await window.ethereum
+      ?.request({ method: "eth_sendTransaction", params })
+      .then(() =>
+        toast("Successful transaction!", {
+          icon: "🥳",
+          style: {
+            borderRadius: "20px",
+            background: "darkgreen",
+            color: "#fff",
+          },
+        })
+      )
+      .catch((err) => {
+        console.log(err);
+        toast("Usuccessful transaction :(", {
+          icon: "😞",
+          style: {
+            borderRadius: "20px",
+            backgroundColor: "black",
+            color: "#fff",
+          },
+        });
+      })
+      .finally(() => {
+        setIsLoading(false);
+        toast;
+      });
+
   }
 
   const installMetamask = async () => {
