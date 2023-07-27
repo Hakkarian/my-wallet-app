@@ -7,13 +7,6 @@ import { toast } from "react-hot-toast";
 import { ErrorMessageCss, FieldCss, FormCss, SubmitButtonCss, Css } from './WalletForm.styled';
 import {Loader} from '../Loader'
 
-if (window.ethereum) {
-  alert('Found MetaMask!')
-} 
-if (!window.ethereum) {
-  alert('Not found MetaMask')
-}
-
 const validationSchema = Yup.object().shape({
   balance: Yup.number().required().min(0.000001, "Please, enter more that 0.000001 tokens.").max(100000, "Please, enter less than 100000 tokens."),
   address: Yup.string().required().matches(/^0x[0-9a-zA-Z]{40}$/, "Address must be a combination of 40 chars followed by 0x prefix.")
